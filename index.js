@@ -37,7 +37,7 @@ const StartMongo = async()=>{
 }
 StartMongo()
 Cmds.init = mongoInit
-Cmds.aggregate = async({ collection, matchCondition, data = [] })=>{
+Cmds.aggregate = async( collection, matchCondition, data = [] )=>{
   try{
     if(matchCondition) data.unshift({$match: matchCondition})
     return await dbo.collection(collection).aggregate(data, { allowDiskUse: true }).toArray()
@@ -45,28 +45,28 @@ Cmds.aggregate = async({ collection, matchCondition, data = [] })=>{
     throw(e);
   }
 }
-Cmds.del = async({ collection, matchCondition })=>{
+Cmds.del = async( collection, matchCondition )=>{
   try{
     return await dbo.collection(collection).deleteOne(matchCondition)
   }catch(e){
     throw(e)
   }
 }
-Cmds.delMany = async({collection, matchCondition})=>{
+Cmds.delMany = async(collection, matchCondition)=>{
   try{
     return await dbo.collection(collection).deleteMany(matchCondition)
   }catch(e){
     throw(e)
   }
 }
-Cmds.count = async({collection, matchCondition})=>{
+Cmds.count = async(collection, matchCondition)=>{
   try{
     return await dbo.collection( collection ).countDocuments(matchCondition)
   }catch(e){
     throw(e)
   }
 }
-Cmds.find = async({collection, matchCondition, data})=>{
+Cmds.find = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection( collection ).find( matchCondition, {projection: data} ).toArray()
   }catch(e){
@@ -74,7 +74,7 @@ Cmds.find = async({collection, matchCondition, data})=>{
     return []
   }
 }
-Cmds.limit = async({collection, matchCondition, data, limitCount = 50, })=>{
+Cmds.limit = async(collection, matchCondition, data, limitCount = 50 )=>{
   try{
     return await dbo.collection( collection ).find( matchCondition, { projection: data } ).limit( limitCount ).toArray()
   }catch(e){
@@ -82,7 +82,7 @@ Cmds.limit = async({collection, matchCondition, data, limitCount = 50, })=>{
     return []
   }
 }
-Cmds.insert = async({collection, data})=>{
+Cmds.insert = async(collection, data)=>{
   try{
     data.TTL = new Date()
     return await dbo.collection(collection).insertOne(data)
@@ -90,14 +90,14 @@ Cmds.insert = async({collection, data})=>{
     throw (e)
   }
 }
-Cmds.math = async({collection, matchCondition, data})=>{
+Cmds.math = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection(collection).updateOne(matchCondition, {$inc: data, $set: {TTL: new Date()}}, {"upsert":true})
   }catch(e){
     throw (e)
   }
 }
-Cmds.next = async({collection, matchCondition, data})=>{
+Cmds.next = async(collection, matchCondition, data)=>{
   try{
     const checkCounter = await dbo.collection(collection).findOneAndUpdate(matchCondition,{$inc:{[data]:1}},{returnNewDocument:true, upsert: true})
     if(checkCounter.value){
@@ -110,22 +110,23 @@ Cmds.next = async({collection, matchCondition, data})=>{
     throw (e)
   }
 }
-Cmds.push = async({collection, matchCondition, data})=>{
+Cmds.push = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection(collection).updateOne(matchCondition, {$push: data, $set: {TTL: new Date()}}, {"upsert":true})
   }catch(e){
     throw (e)
   }
 }
-Cmds.pull = async({collection, matchCondition, data})=>{
+Cmds.pull = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection(collection).updateOne(matchCondition, {$pull: data, $set: {TTL: new Date()}})
   }catch(e){
     throw (e)
   }
 }
-Cmds.rep = async({collection, matchCondition, data})=>{
+Cmds.rep = async(collection, matchCondition, data)=>{
   try {
+    //if(!data) return
     data.TTL = new Date()
     let res = await dbo.collection(collection).replaceOne(matchCondition, data, { upsert: true });
     delete data.TTL
@@ -134,7 +135,7 @@ Cmds.rep = async({collection, matchCondition, data})=>{
     throw (e)
   }
 }
-Cmds.set = async({ collection, matchCondition, data })=>{
+Cmds.set = async( collection, matchCondition, data )=>{
   try{
     if(!data.TTL) data.TTL = new Date()
     let res = await dbo.collection(collection).updateOne(matchCondition,{$set: data },{"upsert":true})
@@ -144,7 +145,7 @@ Cmds.set = async({ collection, matchCondition, data })=>{
     throw (e)
   }
 }
-Cmds.setMany = async({collection, matchCondition, data })=>{
+Cmds.setMany = async(collection, matchCondition, data )=>{
   try{
     if(!data.TTL) data.TTL = new Date()
     let res = await dbo.collection(collection).updateMany(matchCondition, {$set: data}, {upsert: true})
@@ -154,7 +155,7 @@ Cmds.setMany = async({collection, matchCondition, data })=>{
     throw(e)
   }
 }
-Cmds.skip = async({collection, matchCondition, data, limitCount = 50, skipCount = 50})=>{
+Cmds.skip = async(collection, matchCondition, data, limitCount = 50, skipCount = 50)=>{
   try{
     return await dbo.collection( collection ).find( matchCondition, { projection: data } ).limit( limitCount ).skip( skipCount ).toArray()
   }catch(e){
@@ -165,7 +166,7 @@ Cmds.skip = async({collection, matchCondition, data, limitCount = 50, skipCount 
 Cmds.status = () =>{
   return mongoReady
 }
-Cmds.unset = async({collection, matchCondition, data})=>{
+Cmds.unset = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection(collection).updateOne(matchCondition, {$unset: data, $set: {TTL: new Date()}})
   }catch(e){
