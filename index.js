@@ -5,16 +5,13 @@ log.setLevel(logLevel);
 
 let mongoReady = false
 const { MongoClient } = require("mongodb");
-let dbo, mongo, connectionString = 'mongodb://'+process.env.MONGO_USER+':'+process.env.MONGO_PASS+'@'+process.env.MONGO_HOST+'/?compressors=zlib'
+let dbo, mongo, connectionString = 'mongodb://'+process.env.MONGO_USER+':'+process.env.MONGO_PASS+'@'+process.env.MONGO_HOST+'/?compressors=zlib&retryReads=true&retryWrites=true&maxPoolSize=200'
+if(process.env.MONGO_AUTH_DB) connectionString += '&authSource='+process.env.MONGO_AUTH_DB
+if(process.env.MONGO_REPSET) connectionString += '&replicaSet='+process.env.MONGO_REPSET
 const Cmds = {}
 const mongoInit = async()=>{
   try{
-    if(process.env.MONGO_AUTH_DB) connectionString += '&authSource='+process.env.MONGO_AUTH_DB
-    if(process.env.MONGO_REPSET) connectionString += '&replicaSet='+process.env.MONGO_REPSET
-    mongo = await MongoClient.connect(connectionString, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    })
+    mongo = await MongoClient.connect(connectionString)
     dbo = await mongo.db(process.env.MONGO_DB)
     return true
   }catch(e){
