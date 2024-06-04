@@ -98,10 +98,10 @@ Cmds.next = async(collection, matchCondition, data)=>{
   try{
     const checkCounter = await dbo.collection(collection).findOneAndUpdate(matchCondition,{$inc:{[data]:1}},{returnNewDocument:true, upsert: true})
     if(checkCounter.value){
-      return checkCounter.value[data]
+      if(nextValue?.value) return checkCounter.value[data]
     }else{
       const nextValue = await dbo.collection(collection).findOneAndUpdate(matchCondition,{$inc:{[data]:1}},{returnNewDocument:true})
-      return nextValue.value[data]
+      if(nextValue?.value) return nextValue.value[data]
     }
   }catch(e){
     throw (e)
