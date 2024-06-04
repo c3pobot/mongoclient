@@ -96,13 +96,11 @@ Cmds.math = async(collection, matchCondition, data)=>{
 }
 Cmds.next = async(collection, matchCondition, data)=>{
   try{
-    const checkCounter = await dbo.collection(collection).findOneAndUpdate(matchCondition,{$inc:{[data]:1}},{returnNewDocument:true, upsert: true})
-    if(checkCounter.value){
-      if(nextValue?.value) return checkCounter.value[data]
-    }else{
-      const nextValue = await dbo.collection(collection).findOneAndUpdate(matchCondition,{$inc:{[data]:1}},{returnNewDocument:true})
-      if(nextValue?.value) return nextValue.value[data]
-    }
+    const checkCounter = await dbo.collection(collection).findOneAndUpdate(matchCondition,{ $inc:{ [data]:1 } }, {returnNewDocument:true, upsert: true} )
+    
+    if(checkCounter && checkCounter[data]) return checkCounter[data]
+    const nextValue = await dbo.collection(collection).findOneAndUpdate(matchCondition,{ $inc: { [data]:1 } }, { returnNewDocument:true } )
+    if(nextValue) return nextValue[data]
   }catch(e){
     throw (e)
   }
