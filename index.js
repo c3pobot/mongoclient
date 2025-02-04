@@ -63,6 +63,21 @@ Cmds.count = async(collection, matchCondition)=>{
     throw(e)
   }
 }
+Cmds.createIndex = async(collection, indexObj)=>{
+  try{
+    if(!indexObj) throw('No index provided...')
+    return await dbo.collection( collection ).createIndex(indexObj)
+  }catch(e){
+    throw(e)
+  }
+}
+Cmds.listIndexes = async(collection)=>{
+  try{
+    return await dbo.collection( collection ).listIndexes().toArray()
+  }catch(e){
+    throw(e)
+  }
+}
 Cmds.find = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection( collection ).find( matchCondition, {projection: data} ).toArray()
@@ -97,7 +112,7 @@ Cmds.math = async(collection, matchCondition, data)=>{
 Cmds.next = async(collection, matchCondition, data)=>{
   try{
     const checkCounter = await dbo.collection(collection).findOneAndUpdate(matchCondition,{ $inc:{ [data]:1 } }, {returnNewDocument:true, upsert: true} )
-    
+
     if(checkCounter && checkCounter[data]) return checkCounter[data]
     const nextValue = await dbo.collection(collection).findOneAndUpdate(matchCondition,{ $inc: { [data]:1 } }, { returnNewDocument:true } )
     if(nextValue) return nextValue[data]
