@@ -67,8 +67,7 @@ Cmds.createIndex = async(collection, indexObj, opts = {})=>{
   try{
     if(!indexObj) throw('No index provided...')
     //opts = { background: true, expireAfterSeconds: 600 }
-
-    return await dbo.collection( collection ).createIndex(indexObj, { ...opts, ...{ background: true }})
+    return await dbo.collection( collection ).createIndex(indexObj, opts)
   }catch(e){
     throw(e)
   }
