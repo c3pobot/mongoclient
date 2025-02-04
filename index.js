@@ -63,10 +63,12 @@ Cmds.count = async(collection, matchCondition)=>{
     throw(e)
   }
 }
-Cmds.createIndex = async(collection, indexObj)=>{
+Cmds.createIndex = async(collection, indexObj, opts = {})=>{
   try{
     if(!indexObj) throw('No index provided...')
-    return await dbo.collection( collection ).createIndex(indexObj)
+    //opts = { background: true, expireAfterSeconds: 600 }
+
+    return await dbo.collection( collection ).createIndex(indexObj, { ...opts, ...{ background: true }})
   }catch(e){
     throw(e)
   }
