@@ -8,7 +8,7 @@ const { MongoClient } = require("mongodb");
 let dbo, mongo, connectionString = 'mongodb://'+process.env.MONGO_USER+':'+process.env.MONGO_PASS+'@'+process.env.MONGO_HOST+'/?compressors=zlib&retryReads=true&retryWrites=true&maxPoolSize=200'
 if(process.env.MONGO_AUTH_DB) connectionString += '&authSource='+process.env.MONGO_AUTH_DB
 if(process.env.MONGO_REPSET) connectionString += '&replicaSet='+process.env.MONGO_REPSET
-const Cmds = {}
+
 const mongoInit = async()=>{
   try{
     mongo = await MongoClient.connect(connectionString)
@@ -33,6 +33,11 @@ const StartMongo = async()=>{
   }
 }
 StartMongo()
+const Cmds = {
+  get ready(){
+    return mongoReady
+  }
+}
 Cmds.init = mongoInit
 Cmds.aggregate = async( collection, matchCondition, data = [] )=>{
   try{
