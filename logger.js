@@ -20,13 +20,13 @@ function getTimeStamp(timestamp){
   let dateTime = new Date(timestamp)
   return dateTime.toLocaleString('en-US', { timeZone: 'Etc/GMT+5', hour12: false })
 }
-function getContent(msg){
+function getContent(content){
   try{
-    if(!msg?.message || logLevel == 1) return msg
-    if(msg?.message) return msg.message
-    return msg
+    if(logLevel === 1) return content
+    if(content?.message) return content.message
+    return content
   }catch(e){
-    return msg
+    return content
   }
 }
 
@@ -43,20 +43,24 @@ module.exports.Level = Level;
 
 function log(type, message) {
   if (logLevel <= LevelMap[type]) {
-    let timestamp = Date.now()
-    let content = getContent(message)
     switch (type) {
       case Level.ERROR: {
-        return console.error(`${getTimeStamp(timestamp)} ${chalk.bgRed(type.toUpperCase())} ${content}`);
+        console.error(`${getTimeStamp(Date.now())} ${chalk.bgRed(type.toUpperCase())} ${getContent(content)}`);
+        if(logLevel === 1 && content?.message) console.error(content)
+        return
       }
       case Level.WARN: {
-        return console.warn(`${getTimeStamp(timestamp)} ${chalk.black.bgYellow(type.toUpperCase())} ${content}`);
+        console.warn(`${getTimeStamp(Date.now())} ${chalk.black.bgYellow(type.toUpperCase())} ${getContent(content)}`);
+        if(logLevel === 1 && content?.message) console.warn(content)
+        return
       }
       case Level.INFO: {
-        return console.log(`${getTimeStamp(timestamp)} ${chalk.bgBlue(type.toUpperCase())} ${content}`);
+        console.log(`${getTimeStamp(Date.now())} ${chalk.bgBlue(type.toUpperCase())} ${getContent(content)}`);
+        if(logLevel === 1 && content?.message) console.error(content)
+        return
       }
       case Level.DEBUG: {
-        return console.log(`${getTimeStamp(timestamp)} ${chalk.green(type.toUpperCase())} ${content}`);
+        return console.log(`${getTimeStamp(Date.now())} ${chalk.green(type.toUpperCase())} ${getContent(content)}`);
       }
       default: throw new TypeError('Logger type must be either error, warn, info/log, or debug.');
     }
