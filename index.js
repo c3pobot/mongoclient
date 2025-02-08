@@ -38,34 +38,37 @@ const Cmds = {
     return mongoReady
   }
 }
+Cmds.setLogLevel = (logLevel)=>{
+  log.setLevel(logLevel);
+}
 Cmds.init = mongoInit
 Cmds.aggregate = async( collection, matchCondition, data = [] )=>{
   try{
     if(matchCondition) data.unshift({$match: matchCondition})
     return await dbo.collection(collection).aggregate(data, { allowDiskUse: true }).toArray()
   }catch(e){
-    throw(e);
+    log.error(e);
   }
 }
 Cmds.del = async( collection, matchCondition )=>{
   try{
     return await dbo.collection(collection).deleteOne(matchCondition)
   }catch(e){
-    throw(e)
+    log.error(e)
   }
 }
 Cmds.delMany = async(collection, matchCondition)=>{
   try{
     return await dbo.collection(collection).deleteMany(matchCondition)
   }catch(e){
-    throw(e)
+    log.error(e)
   }
 }
 Cmds.count = async(collection, matchCondition)=>{
   try{
     return await dbo.collection( collection ).countDocuments(matchCondition)
   }catch(e){
-    throw(e)
+    log.error(e)
   }
 }
 Cmds.createIndex = async(collection, indexObj, opts = {})=>{
@@ -74,21 +77,21 @@ Cmds.createIndex = async(collection, indexObj, opts = {})=>{
     //opts = { background: true, expireAfterSeconds: 600 }
     return await dbo.collection( collection ).createIndex(indexObj, opts)
   }catch(e){
-    throw(e)
+    log.error(e)
   }
 }
 Cmds.listIndexes = async(collection)=>{
   try{
     return await dbo.collection( collection ).listIndexes().toArray()
   }catch(e){
-    throw(e)
+    log.error(e)
   }
 }
 Cmds.find = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection( collection ).find( matchCondition, {projection: data} ).toArray()
   }catch(e){
-    throw(e)
+    log.error(e)
     return []
   }
 }
@@ -96,7 +99,7 @@ Cmds.limit = async(collection, matchCondition, data, limitCount = 50 )=>{
   try{
     return await dbo.collection( collection ).find( matchCondition, { projection: data } ).limit( limitCount ).toArray()
   }catch(e){
-    throw(e)
+    log.error(e)
     return []
   }
 }
@@ -105,14 +108,14 @@ Cmds.insert = async(collection, data)=>{
     data.TTL = new Date()
     return await dbo.collection(collection).insertOne(data)
   }catch(e){
-    throw (e)
+    log.error(e)
   }
 }
 Cmds.math = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection(collection).updateOne(matchCondition, {$inc: data, $set: {TTL: new Date()}}, {"upsert":true})
   }catch(e){
-    throw (e)
+    log.error(e)
   }
 }
 Cmds.next = async(collection, matchCondition, data)=>{
@@ -123,21 +126,21 @@ Cmds.next = async(collection, matchCondition, data)=>{
     const nextValue = await dbo.collection(collection).findOneAndUpdate(matchCondition,{ $inc: { [data]:1 } }, { returnNewDocument:true } )
     if(nextValue) return nextValue[data]
   }catch(e){
-    throw (e)
+    log.error(e)
   }
 }
 Cmds.push = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection(collection).updateOne(matchCondition, {$push: data, $set: {TTL: new Date()}}, {"upsert":true})
   }catch(e){
-    throw (e)
+    log.error(e)
   }
 }
 Cmds.pull = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection(collection).updateOne(matchCondition, {$pull: data, $set: {TTL: new Date()}})
   }catch(e){
-    throw (e)
+    log.error(e)
   }
 }
 Cmds.rep = async(collection, matchCondition, data)=>{
@@ -148,7 +151,7 @@ Cmds.rep = async(collection, matchCondition, data)=>{
     delete data.TTL
     return res
   } catch (e) {
-    throw (e)
+    log.error(e)
   }
 }
 Cmds.set = async( collection, matchCondition, data )=>{
@@ -158,7 +161,7 @@ Cmds.set = async( collection, matchCondition, data )=>{
     delete data.TTL
     return res
   }catch(e){
-    throw (e)
+    log.error(e)
   }
 }
 Cmds.setMany = async(collection, matchCondition, data )=>{
@@ -168,14 +171,14 @@ Cmds.setMany = async(collection, matchCondition, data )=>{
     delete data.TTL
     return res
   }catch(e){
-    throw(e)
+    log.error(e)
   }
 }
 Cmds.skip = async(collection, matchCondition, data, limitCount = 50, skipCount = 50)=>{
   try{
     return await dbo.collection( collection ).find( matchCondition, { projection: data } ).limit( limitCount ).skip( skipCount ).toArray()
   }catch(e){
-    throw(e)
+    log.error(e)
     return []
   }
 }
@@ -186,7 +189,7 @@ Cmds.unset = async(collection, matchCondition, data)=>{
   try{
     return await dbo.collection(collection).updateOne(matchCondition, {$unset: data, $set: {TTL: new Date()}})
   }catch(e){
-    throw (e)
+    log.error(e)
   }
 }
 module.exports = Cmds

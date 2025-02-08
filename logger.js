@@ -22,24 +22,14 @@ function getTimeStamp(timestamp){
 }
 function getContent(msg){
   try{
-    //if(logLevel === 1) return msg
-    if (typeof msg === 'string' || msg instanceof String) return msg
-    if(msg?.stack){
-      let res = msg
-      if(logLevel === 1){
-        msg += '\n'+msg.stack
-        return msg
-      }
-      let stack = msg.stack?.split('\n')
-      for(let i = 0;i<3;i++) res += '\n'+stack[i]
-      return res
-    }else{
-      return JSON.stringify(msg)
-    }
+    if(!msg?.message || logLevel = 1) return msg
+    if(msg?.message) return msg.message
+    return msg    
   }catch(e){
     return msg
   }
 }
+
 function setLevel(level = Level.INFO) {
   if (LevelMap.hasOwnProperty(level)) {
     logLevel = LevelMap[level];
