@@ -41,7 +41,7 @@ setLevel(Level.INFO);
 
 module.exports.Level = Level;
 
-function log(type, message) {
+function log(type, content) {
   if (logLevel <= LevelMap[type]) {
     switch (type) {
       case Level.ERROR: {
