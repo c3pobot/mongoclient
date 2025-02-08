@@ -22,9 +22,9 @@ function getTimeStamp(timestamp){
 }
 function getContent(msg){
   try{
-    if(!msg?.message || logLevel = 1) return msg
+    if(!msg?.message || logLevel == 1) return msg
     if(msg?.message) return msg.message
-    return msg    
+    return msg
   }catch(e){
     return msg
   }
